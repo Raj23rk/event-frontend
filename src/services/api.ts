@@ -7,7 +7,8 @@ import {
   RosterStudent,
 } from '../types';
 
-const API_BASE = '/api';
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://event-backends-3dg7.onrender.com/api';
+const API_BASE = rawBase.replace(/\/+$/, '');
 
 export const api = {
   // Students

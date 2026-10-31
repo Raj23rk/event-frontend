@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Vite proxy forwards '/api' to 'http://localhost:5000/api'
-const API_BASE = '/api';
+// Backend API URL from environment variable (.env)
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://event-backends-3dg7.onrender.com/api';
+const API_BASE = rawBase.replace(/\/+$/, '');
 
 const apiClient = axios.create({
   baseURL: API_BASE,
