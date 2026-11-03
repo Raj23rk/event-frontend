@@ -10,6 +10,8 @@ import { QuestionWiseReport } from './components/QuestionWiseReport';
 import { QuestionBankManager } from './components/QuestionBankManager';
 import { WorkshopRoster } from './components/WorkshopRoster';
 import { RegistrationQRCodeModal } from './components/RegistrationQRCodeModal';
+import { InternshipLandingPage } from './components/InternshipLandingPage';
+import { InternshipAdminPage } from './components/InternshipAdminPage';
 import { api } from './services/api';
 import { Student, AssessmentSession } from './types';
 import { MapPin, Sparkles } from 'lucide-react';
@@ -223,6 +225,46 @@ export const App: React.FC = () => {
           {/* Question Bank Manager Route */}
           <Route path="/question-bank" element={<QuestionBankManager />} />
           <Route path="/admin/question-bank" element={<QuestionBankManager />} />
+
+          {/* Internship Student Landing Page (with Form, Payment Gateway, Receipt) */}
+          <Route
+            path="/internship"
+            element={
+              <InternshipLandingPage
+                onGoToAdmin={() => navigate('/internship-admin')}
+                onGoToWorkshop={() => navigate('/')}
+              />
+            }
+          />
+          <Route
+            path="/internships"
+            element={
+              <InternshipLandingPage
+                onGoToAdmin={() => navigate('/internship-admin')}
+                onGoToWorkshop={() => navigate('/')}
+              />
+            }
+          />
+
+          {/* Internship Admin Page (Bookings, Pre-booking revenue, Resend receipts) */}
+          <Route
+            path="/internship-admin"
+            element={
+              <InternshipAdminPage
+                onBackToLanding={() => navigate('/internship')}
+                onGoToWorkshop={() => navigate('/')}
+              />
+            }
+          />
+          <Route
+            path="/internships-admin"
+            element={
+              <InternshipAdminPage
+                onBackToLanding={() => navigate('/internship')}
+                onGoToWorkshop={() => navigate('/')}
+              />
+            }
+          />
 
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -5,9 +5,17 @@ import {
   QuestionWiseStat,
   WorkshopOverview,
   RosterStudent,
+  InternshipBooking,
+  InternshipStats,
+  RazorpayOrderResponse,
+  VerifyRazorpayPaymentPayload,
 } from '../types';
 
-const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://event-backends-3dg7.onrender.com/api';
+const rawBase =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/api'
+    : (import.meta.env.VITE_API_BASE_URL || '/api');
 const API_BASE = rawBase.replace(/\/+$/, '');
 
 export const api = {
@@ -155,6 +163,91 @@ export const api = {
 
   async seedDemo(): Promise<any> {
     const res = await fetch(`${API_BASE}/reports/seed-demo`, { method: 'POST' });
+    return res.json();
+  },
+
+  // Internship Endpoints
+  async createInternshipBooking(data: any): Promise<InternshipBooking> {
+    const res = await fetch(`${API_BASE}/internships/register-and-book`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to submit internship application');
+    }
+    return res.json();
+  },
+
+  async confirmInternshipPayment(data: { bookingId: string; paymentMethod: string; transactionId?: string }): Promise<InternshipBooking> {
+    const res = await fetch(`${API_BASE}/internships/confirm-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Payment confirmation failed');
+    }
+    return res.json();
+  },
+
+  async createRazorpayOrder(bookingId: string): Promise<RazorpayOrderResponse> {
+    const res = await fetch(`${API_BASE}/internships/create-razorpay-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to initialize Razorpay payment');
+    }
+    return res.json();
+  },
+
+  async verifyRazorpayPayment(payload: VerifyRazorpayPaymentPayload): Promise<InternshipBooking> {
+    const res = await fetch(`${API_BASE}/internships/verify-razorpay-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Razorpay payment verification failed');
+    }
+    return res.json();
+  },
+
+  async getInternshipBookings(params?: { search?: string; paymentStatus?: string; department?: string; internshipDomain?: string }): Promise<InternshipBooking[]> {
+    const query = new URLSearchParams();
+    if (params?.search) query.append('search', params.search);
+    if (params?.paymentStatus && params.paymentStatus !== 'all') query.append('paymentStatus', params.paymentStatus);
+    if (params?.department && params.department !== 'all') query.append('department', params.department);
+    if (params?.internshipDomain && params.internshipDomain !== 'all') query.append('internshipDomain', params.internshipDomain);
+
+    const res = await fetch(`${API_BASE}/internships/bookings?${query.toString()}`);
+    return res.json();
+  },
+
+  async getInternshipStats(): Promise<InternshipStats> {
+    const res = await fetch(`${API_BASE}/internships/stats`);
+    return res.json();
+  },
+
+  async getInternshipBookingById(id: string): Promise<InternshipBooking> {
+    const res = await fetch(`${API_BASE}/internships/bookings/${id}`);
+    if (!res.ok) throw new Error('Booking not found');
+    return res.json();
+  },
+
+  async resendInternshipReceipt(id: string): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/internships/resend-receipt/${id}`, { method: 'POST' });
+    return res.json();
+  },
+
+  async seedInternshipDemo(): Promise<any> {
+    const res = await fetch(`${API_BASE}/internships/seed-demo`, { method: 'POST' });
     return res.json();
   },
 };

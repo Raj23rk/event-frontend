@@ -159,3 +159,60 @@ export interface RosterStudent {
   rank?: number | null;
 }
 
+
+export interface InternshipBooking {
+  _id: string;
+  bookingId: string;
+  studentName: string;
+  mobile: string;
+  whatsapp: string;
+  email: string;
+  collegeName: string;
+  department: string;
+  year: string;
+  parentsMobile: string;
+  internshipDomain: string;
+  mode: string;
+  prebookingAmount: number;
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentMethod?: string;
+  transactionId?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paidAt?: string;
+  receiptSent?: boolean;
+  emailDeliveryStatus?: string;
+  receiptHtml?: string;
+  enquiryPhone: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface InternshipStats {
+  totalApplications: number;
+  paidCount: number;
+  pendingCount: number;
+  totalRevenue: number;
+  domainBreakdown: Record<string, number>;
+  departmentBreakdown: Record<string, number>;
+  enquiryContact: string;
+}
+
+export interface RazorpayOrderResponse {
+  orderId: string;
+  amount: number;
+  currency: string;
+  keyId: string;
+  bookingId: string;
+  studentName: string;
+  email: string;
+  mobile: string;
+}
+
+export interface VerifyRazorpayPaymentPayload {
+  bookingId: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
